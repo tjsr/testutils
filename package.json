@@ -1,0 +1,51 @@
+{
+  "dependencies": {
+    "supertest": "^7.0.0",
+    "uuid": "^10.0.0",
+    "vitest": "^1.6.0"
+  },
+  "name": "@tjsr/testutils",
+  "version": "0.0.1",
+  "description": "General test utilities",
+  "type": "module",
+  "main": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "scripts": {
+    "test": "vitest --run && npm run lint",
+    "build": "tsc",
+    "build:dist": "tsc && tsc -p tsconfig.cjs.json",
+    "clean": "npx rimraf dist build",
+    "clean:all": "npx rimraf dist build node_modules",
+    "lint": "eslint --config eslint.config.mjs src/*.ts",
+    "lint:fix": "eslint --fix src/*.ts",
+    "prepack": "npm test && npm run build:dist",
+    "prepublishOnly": "npm run clean"
+  },
+  "devDependencies": {
+    "@tjsr/eslint-config": "github:tjsr/eslint-config#main",
+    "@types/express": "^4.17.21",
+    "@types/supertest": "^6.0.2",
+    "@types/uuid": "^10.0.0",
+    "typescript": "^5.5.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tjsr/testUtils.git"
+  },
+  "keywords": [
+    "Testing"
+  ],
+  "author": "Tim Rowe <tim@tjsr.id.au>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tjsr/testUtils/issues"
+  },
+  "homepage": "https://github.com/tjsr/testUtils#readme"
+}
