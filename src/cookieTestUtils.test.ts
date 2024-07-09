@@ -1,5 +1,3 @@
-import { describe, expect, test } from "vitest";
-
 import { getSessionIdFromSetCookieString } from "./cookieTestUtils.js";
 
 describe('getSessionIdFromSetCookieString', () => {

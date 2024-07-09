@@ -1,6 +1,5 @@
 import { Response } from 'express';
 import { SessionId } from "./types.js";
-import { expect } from "vitest";
 import supertest from "supertest";
 
 export const expectSessionCookieHeaderOnResponseMock = (response: Response, sessionID: string) => {

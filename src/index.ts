@@ -13,3 +13,9 @@ export {
   expectSetSessionCookieOnResponseMock,
   expectSessionCookieHeaderOnResponseMock
 } from './cookieTestUtils.js';
+
+export {
+  findEnvFile,
+  findViteConfigPath,
+  findPackageJson
+} from './viteConfigUtils.js';
