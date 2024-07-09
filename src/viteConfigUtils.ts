@@ -4,8 +4,8 @@ export const findPackageJson = (startDir?: string, maxDepth: number = 2): string
   return findFileUpwards('package.json', maxDepth, startDir);
 };
 
-export const findEnvFile = (): string => {
-  return findFileUpwards('.env.test');
+export const findEnvFile = (envFileName: string = '.env', startDir?: string): string => {
+  return findFileUpwards(envFileName, undefined, startDir);
 };
 
 export const findViteConfigPath = ():string => {
