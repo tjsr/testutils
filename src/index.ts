@@ -19,3 +19,10 @@ export {
   findViteConfigPath,
   findPackageJson
 } from './viteConfigUtils.js';
+
+export { addIgnoredLog,
+  addIgnoredLogsFromFunction,
+  clearIgnoredFunctions,
+  clearIgnoreLogFilters,
+  useLogFilters
+} from './logFilters.js';
