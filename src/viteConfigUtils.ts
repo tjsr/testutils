@@ -1,6 +1,6 @@
 import { findFileUpwards } from "@tjsr/fs-utils";
 
-export const findPackageJson = (startDir?: string, maxDepth: number = 2): string|undefined => {
+export const findPackageJson = (startDir?: string, maxDepth: number = 2): string => {
   return findFileUpwards('package.json', maxDepth, startDir);
 };
 
