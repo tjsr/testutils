@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "@tjsr/fs-utils": "^0.0.4",
+    "@tjsr/fs-utils": "^0.0.5",
     "supertest": "^7.0.0",
     "uuid": "^10.0.0",
     "vitest": "^1.6.0"
   },
   "name": "@tjsr/testutils",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "General test utilities",
   "type": "module",
   "main": "dist/esm/index.js",

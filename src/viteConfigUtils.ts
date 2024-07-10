@@ -8,6 +8,6 @@ export const findEnvFile = (envFileName: string = '.env', startDir?: string): st
   return findFileUpwards(envFileName, undefined, startDir);
 };
 
-export const findViteConfigPath = ():string => {
-  return findFileUpwards('vite.config.ts');
+export const findViteConfigPath = (searchDir?: string):string => {
+  return findFileUpwards('vite.config.ts', undefined, searchDir);
 };
