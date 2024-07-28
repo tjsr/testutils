@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@tjsr/fs-utils": "^0.0.5",
+    "@tjsr/fs-utils": "^0.0.6",
     "supertest": "^7.0.0",
     "uuid": "^10.0.0",
     "vitest": "^1.6.0"
@@ -35,11 +35,11 @@
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
     "eslint": "^8.57.0",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.4"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tjsr/testUtils.git"
+    "url": "git+https://github.com/tjsr/testutils.git"
   },
   "keywords": [
     "Testing"
@@ -47,7 +47,7 @@
   "author": "Tim Rowe <tim@tjsr.id.au>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tjsr/testUtils/issues"
+    "url": "https://github.com/tjsr/testutils/issues"
   },
-  "homepage": "https://github.com/tjsr/testUtils#readme"
+  "homepage": "https://github.com/tjsr/testutils#readme"
 }
