@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PROJECT: tagtool
+      PROJECT: '@tjsr/testutils'
       PACKAGE: ${{ inputs.package }}
     steps:
       - name: Check out repository code
