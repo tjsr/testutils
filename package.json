@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@tjsr/fs-utils": "^0.0.6",
+    "@tjsr/fs-utils": "^0.0.7",
     "supertest": "^7.0.0",
     "uuid": "^10.0.0",
     "vitest": "^1.6.0"
