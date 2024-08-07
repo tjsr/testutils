@@ -1,5 +1,5 @@
 name: Build
-run-name: ${{ github.actor }} Running express-server-helper build.
+run-name: Running testutils build.
 on: [push]
 jobs:
   build:
@@ -7,21 +7,14 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-    - name: Use Node.js
-      uses: actions/setup-node@main
-      with:
-        node-version: 20.15.0
-    
     - name: Check out repository code
       uses: actions/checkout@main
 
     # Setup .npmrc file to publish to GitHub Packages
     - uses: actions/setup-node@v4
       with:
-        node-version: 20.15.0
+        node-version: ${{ vars.NODE_VERSION }}
         registry-url: 'https://npm.pkg.github.com'
-        # Defaults to the user or organization that owns the workflow file
-        scope: '@tjsr'
 
     - name: Cache node modules
       id: cache-npm
