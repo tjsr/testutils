@@ -21,14 +21,18 @@
   "scripts": {
     "test": "vitest --run && npm run lint",
     "build": "tsc",
-    "build:dev": "linkteam && tsc -w",
+    "build:dev": "tsc -w",
     "build:dist": "tsc -p tsconfig.publish.json && tsc -p tsconfig.cjs.json",
     "clean": "npx rimraf dist build",
     "clean:all": "npx rimraf dist build node_modules",
+    "prebuild:dev": "linkteam",
+    "predist": "npm run test",
+    "predist:clean": "npm run clean",
+    "dist": "npm run build:dist",
+    "dist:clean": "npm run dist",
     "lint": "eslint --config eslint.config.mjs src/*.ts",
     "lint:fix": "eslint --fix src/*.ts",
-    "prepack": "npm test && npm run build:dist",
-    "prepublishOnly": "npm run clean"
+    "prepack": "npm run dist:clean"
   },
   "devDependencies": {
     "@tjsr/eslint-config": "github:tjsr/eslint-config#main",
