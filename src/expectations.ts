@@ -27,7 +27,7 @@ export const expectResponseResetsSessionIdCookie = (
   expect(responseCookies!.length, 'Response Set-Cookie header had no values').toBeGreaterThan(0);
 
   const matchingCookieValue: string|undefined =
-    responseCookies?.find((cookieValue) => cookieValue.match(/sessionId=(.*);/));
+    responseCookies?.find((cookieValue:string) => cookieValue.match(/sessionId=(.*);/));
 
   expect(matchingCookieValue, 'Response Set-Cookie header had no value with sessionId=').not.toBeUndefined();
   expectDifferentSetCookieSessionId(originalSessionId, matchingCookieValue!);
