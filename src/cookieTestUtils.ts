@@ -1,28 +1,39 @@
-import { Response } from 'express';
 import { SessionId } from "./types.js";
 import supertest from "supertest";
+import { validate } from "uuid";
 
-export const expectSetSessionCookieHeaderOnResponseMock = (
-  cookieIdKey: string,
-  response: Response,
-  sessionID: string
-) => {
-  expect(response.set).toBeCalledWith('Set-Cookie', `${cookieIdKey}=${sessionID}; Path=/; HttpOnly; SameSite=Strict`);
+const parseCookie = (cookieHeader: string): Record<string, string> => {
+  const elements: Record<string, string> = {};
+  if (!cookieHeader) return elements;
+
+  cookieHeader.split(`;`).forEach(function(cookie) {
+    let [ name, ...rest] = cookie.split(`=`);
+    name = name?.trim();
+    if (!name) return;
+    const value = rest.join(`=`).trim();
+    if (!value) return;
+    elements[name] = decodeURIComponent(value);
+  });
+
+  return elements;
 };
 
-
-export const expectSetSessionCookieOnResponseMock = (cookieIdKey: string, response: Response, sessionID: string) => {
-  expect(response.cookie).toBeCalledWith(cookieIdKey, sessionID, { httpOnly: true, path: '/', strict: true });
+const getSidFromSignedSessionId = (signedSessionId: string): string|undefined => {
+  const sid = signedSessionId.split(`.`)[0];
+  return sid?.substring(2);
 };
 
 export const getSessionIdFromSetCookieString = (cookieIdKey: string, cookieString: string): SessionId => {
-  const cookieMatches = cookieString.match(new RegExp(`${cookieIdKey}=([a-f0-9\\-]+);(.*)?`));
-  expect(cookieMatches, `At least one ${cookieIdKey}= cookie needs to be present`).not.toBeUndefined();
+  const cookieParts = parseCookie(cookieString);
+  const sidPart = cookieParts[cookieIdKey];
 
-  const firstMatch: string | undefined = cookieMatches![1];
-
-  expect(firstMatch, `${cookieIdKey}= cookie should have a value`).not.toBeUndefined();
-  return firstMatch!;
+  expect(sidPart).not.toBeUndefined();
+  const cookieSessionId = getSidFromSignedSessionId(sidPart!);
+  expect(cookieSessionId, `${cookieIdKey}= cookie should have a value`).not.toBeUndefined();
+  expect(validate(cookieSessionId!),
+    `Returned cookie sessionId ${cookieSessionId} was not a valid uuid from cookie string ${cookieString}`
+  ).toBe(true);
+  return cookieSessionId!;
 };
 
 export const getSupertestSessionIdCookie = (
@@ -35,7 +46,14 @@ export const getSupertestSessionIdCookie = (
   return getSessionIdFromSetCookieString(cookieIdKey, cookieValue!);
 };
 
+export const getSetCookieString = (cookieIdKey: string, sessionId: string): string => {
+  return `${cookieIdKey}=${sessionId}; Path=/; HttpOnly; SameSite=Strict`;
+};
 
-export const expectSessionCookieHeaderOnResponseMock = (response: Response, sessionID: string) => {
-  expect(response.cookie).toBeCalledWith('sessionId', sessionID, { httpOnly: true, path: '/', strict: true });
+export const setSessionCookie = (
+  app: supertest.Test,
+  sessionIdKey: string,
+  sessionId: string
+): void => {
+  app.set('Set-Cookie', getSetCookieString(sessionIdKey, sessionId));
 };

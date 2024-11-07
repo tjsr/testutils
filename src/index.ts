@@ -4,14 +4,16 @@ export {
   expectSetCookieSessionId,
   expectDifferentSetCookieSessionId,
   expectResponseSetsSessionIdCookie,
-  expectResponseResetsSessionIdCookie
+  expectResponseResetsSessionIdCookie,
+  expectSetSessionCookieOnResponseMock,
+  expectSessionCookieHeaderOnResponseMock,
+  expectSetSessionCookieHeaderOnResponseMock
 } from './expectations.js';
 
 export {
+  getSetCookieString,
   getSupertestSessionIdCookie,
-  getSessionIdFromSetCookieString,
-  expectSetSessionCookieOnResponseMock,
-  expectSessionCookieHeaderOnResponseMock
+  getSessionIdFromSetCookieString
 } from './cookieTestUtils.js';
 
 export {

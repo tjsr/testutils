@@ -1,5 +1,23 @@
+import { CookieOptions, Response } from 'express';
 import { SessionId } from "./types.js";
 import supertest from "supertest";
+
+export const expectSetSessionCookieHeaderOnResponseMock = (
+  cookieIdKey: string,
+  response: Response,
+  sessionID: string
+) => {
+  expect(response.set).toBeCalledWith('Set-Cookie', `${cookieIdKey}=${sessionID}; Path=/; HttpOnly; SameSite=Strict`);
+};
+
+export const expectSetSessionCookieOnResponseMock = (
+  cookieIdKey: string, response: Response, sessionID: string, expectedCookieOptions?: CookieOptions) => {
+  const cookieOptions: CookieOptions = {
+    ...{ httpOnly: true, path: '/', sameSite: 'strict' },
+    ...expectedCookieOptions,
+  };
+  expect(response.cookie).toBeCalledWith(cookieIdKey, sessionID, cookieOptions);
+};
 
 export const expectResponseSetsSessionIdCookie = (
   response: supertest.Response, expectedSessionId: SessionId
@@ -37,4 +55,8 @@ export const expectResponseResetsSessionIdCookie = (
     const firstCookieValue = responseCookies![0]!;
     expectDifferentSetCookieSessionId(originalSessionId, firstCookieValue);
   }
-}; 
+};
+
+export const expectSessionCookieHeaderOnResponseMock = (response: Response, sessionID: string) => {
+  expect(response.cookie).toBeCalledWith('sessionId', sessionID, { httpOnly: true, path: '/', strict: true });
+};
