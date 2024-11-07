@@ -39,9 +39,9 @@ jobs:
       run: npm list
 
     - run: npm run test
-    - run: npm run build
+    - run: npm run build:dist
 
-    - name: Run lint at end on all other branches
+    - name: Run all checks at end on all other branches
       if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/prod'
       run: |
         npm publish --dry-run

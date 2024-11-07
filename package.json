@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "@tjsr/fs-utils": "^0.0.7",
+    "@tjsr/fs-utils": "^0.0.8",
     "supertest": "^7.0.0",
-    "uuid": "^10.0.0",
-    "vitest": "^1.6.0"
+    "uuid": "^11.0.2",
+    "vitest": "^2.1.4"
   },
   "name": "@tjsr/testutils",
   "version": "0.0.8",
@@ -21,22 +21,27 @@
   "scripts": {
     "test": "vitest --run && npm run lint",
     "build": "tsc",
-    "build:dev": "linkteam && tsc -w",
+    "build:dev": "tsc -w",
     "build:dist": "tsc -p tsconfig.publish.json && tsc -p tsconfig.cjs.json",
     "clean": "npx rimraf dist build",
     "clean:all": "npx rimraf dist build node_modules",
+    "prebuild:dev": "linkteam",
+    "predist": "npm run test",
+    "predist:clean": "npm run clean",
+    "dist": "npm run build:dist",
+    "dist:clean": "npm run dist",
     "lint": "eslint --config eslint.config.mjs src/*.ts",
     "lint:fix": "eslint --fix src/*.ts",
-    "prepack": "npm test && npm run build:dist",
-    "prepublishOnly": "npm run clean"
+    "prepack": "npm run dist:clean"
   },
   "devDependencies": {
     "@tjsr/eslint-config": "github:tjsr/eslint-config#main",
     "@types/express": "^4.17.21",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
-    "eslint": "^8.57.0",
-    "typescript": "^5.5.4"
+    "eslint": "^9.13.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3"
   },
   "repository": {
     "type": "git",
