@@ -1,59 +1,96 @@
-import { SessionId } from "./types.js";
+import { SessionId, SessionSecret, SessionSecretSet } from "./types.js";
+
+import cookie from 'cookie';
+import cookieParser from "cookie-parser";
+import signature from "cookie-signature";
 import supertest from "supertest";
 import { validate } from "uuid";
 
-const parseCookie = (cookieHeader: string): Record<string, string> => {
-  const elements: Record<string, string> = {};
-  if (!cookieHeader) return elements;
+export const getCookieFromSetCookieHeaderString = (
+  cookieIdKey: string,
+  cookieHeader: string,
+  secret: SessionSecretSet
+): SessionId => {
+  const cookieObject: Record<string, string|undefined> = cookie.parse(cookieHeader);
+  expect(cookieObject[cookieIdKey], `Cookie ${cookieIdKey} not found in ${cookieHeader}`).not.toBeUndefined();
+  const parsedCookie = cookieParser.signedCookie(cookieObject[cookieIdKey]!, secret);
+  
+  expect(parsedCookie,
+    `Parsed cookie ${cookieObject[cookieIdKey]} did not match session secret.`).not.toEqual(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (typeof parsedCookie === 'object' && (parsedCookie as any)[cookieIdKey] === false) {
+    throw new Error(`Cookie ${cookieObject[cookieIdKey]} was not signed correctly with secret ${secret}`);
+  }
+  expect(parsedCookie, `${cookieIdKey} not found on cookie ${cookieHeader} (${parsedCookie})`).not.toBeUndefined();
+  // expect(typeof parsedCookie, 
+  //   `Cookie result is ${parsedCookie} for input string ${cookieHeader} ` + 
+  //   'but should be parsed out as object when correctly signed.').not.toEqual('string'); 
 
-  cookieHeader.split(`;`).forEach(function(cookie) {
-    let [ name, ...rest] = cookie.split(`=`);
-    name = name?.trim();
-    if (!name) return;
-    const value = rest.join(`=`).trim();
-    if (!value) return;
-    elements[name] = decodeURIComponent(value);
-  });
+  // const cookieSessionId = (parsedCookie as any)[cookieIdKey];
 
-  return elements;
-};
-
-const getSidFromSignedSessionId = (signedSessionId: string): string|undefined => {
-  const sid = signedSessionId.split(`.`)[0];
-  return sid?.substring(2);
-};
-
-export const getSessionIdFromSetCookieString = (cookieIdKey: string, cookieString: string): SessionId => {
-  const cookieParts = parseCookie(cookieString);
-  const sidPart = cookieParts[cookieIdKey];
-
-  expect(sidPart).not.toBeUndefined();
-  const cookieSessionId = getSidFromSignedSessionId(sidPart!);
-  expect(cookieSessionId, `${cookieIdKey}= cookie should have a value`).not.toBeUndefined();
-  expect(validate(cookieSessionId!),
-    `Returned cookie sessionId ${cookieSessionId} was not a valid uuid from cookie string ${cookieString}`
+  // expect(cookieSessionId, `${cookieIdKey}= cookie should have a value`).not.toBeUndefined();
+  expect(validate(parsedCookie!),
+    `Returned cookie ${parsedCookie} was not a valid uuid from cookie string ${cookieHeader}`
   ).toBe(true);
-  return cookieSessionId!;
+  return parsedCookie! as string;
 };
 
 export const getSupertestSessionIdCookie = (
   cookieIdKey: string,
-  response: supertest.Response
+  response: supertest.Response,
+  sessionSecret: SessionSecretSet
 ): SessionId | undefined => {
   const cookieValue: string | undefined = response.get('Set-Cookie')![0];
   expect(cookieValue, 'Set-Cookie should have at least one value').not.toBeUndefined();
 
-  return getSessionIdFromSetCookieString(cookieIdKey, cookieValue!);
+  return getCookieFromSetCookieHeaderString(cookieIdKey, cookieValue!, sessionSecret);
 };
 
-export const getSetCookieString = (cookieIdKey: string, sessionId: string): string => {
-  return `${cookieIdKey}=${sessionId}; Path=/; HttpOnly; SameSite=Strict`;
+/**
+ * 
+ * @param cookieIdKey 
+ * @param cookieValue 
+ * @param secret 
+ * @param options 
+ * @returns Signed, URLEncoded string that can be sent in a Set-Cookie header
+ */
+export const getSetCookieString = (
+  cookieIdKey: string,
+  cookieValue: string,
+  secret: SessionSecretSet,
+  options?: cookie.SerializeOptions
+): string => {
+  if (!secret) {
+    throw new Error('Do not use unsigned cookies.');
+  }
+  if (Array.isArray(secret) && secret.length === 0) {
+    throw new Error('Secret list was an empty array. Must have at least one secret.');
+  }
+  if (cookieValue === undefined) {
+    throw new Error(`Cookie value to set for ${cookieIdKey} was undefined`);
+  }
+  if (typeof cookieValue !== 'string') {
+    throw new Error('Provided cookie value is not a string');
+  }
+  const cipherSecret: SessionSecret = Array.isArray(secret) ? secret[0] as string : secret as string;
+  cookieValue = 's:' + signature.sign(cookieValue, cipherSecret);
+  const cookieString = cookie.serialize(cookieIdKey, cookieValue, {
+    ...options,
+    httpOnly: options?.httpOnly ?? true,
+    path: options?.path ?? '/',
+    sameSite: options?.sameSite ?? 'strict',
+  });
+  assert(cookieString !== undefined, 'Cookie string should have been defined');
+  assert(cookieString !== '', 'Cookie string should not have been empty');
+  return cookieString;
 };
 
 export const setSessionCookie = (
   app: supertest.Test,
   sessionIdKey: string,
-  sessionId: string
+  sessionId: SessionId,
+  secret: SessionSecretSet
 ): void => {
-  app.set('Set-Cookie', getSetCookieString(sessionIdKey, sessionId));
+  assert(sessionId !== undefined, `Session ID for ${sessionIdKey} was passed to set on supertest app as undefined (secret=${secret}).`);
+  app.set('Cookie', getSetCookieString(sessionIdKey, sessionId, secret));
 };

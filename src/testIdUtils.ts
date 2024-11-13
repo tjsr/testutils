@@ -1,7 +1,7 @@
-import { IdNamespace, SessionId, UserId } from './types.js';
+import { IdNamespace, SessionSecret, UserId } from './types.js';
 
+import { NIL_UUID, SESSION_SECRET_UUID, createTestRunNamespace } from './testNamespaceUtils.js';
 import { TaskContext } from 'vitest';
-import { createTestRunNamespace } from './testNamespaceUtils.js';
 import crypto from 'crypto';
 import { v5 } from 'uuid';
 
@@ -53,16 +53,28 @@ export const createTestSessionId = (suite: string): string => {
   return generateTestIdString(suite, 'o', 1000);
 };
 
-export const generateSessionIdForTest = (context: TaskContext, sessionPrefix?: string): string => {
-  const taskNamespace: IdNamespace = createTestRunNamespace(context.task.name);
+const generatePrefixedUuidForTest = (
+  context: TaskContext, namespace: IdNamespace = NIL_UUID, prefix?: string
+): IdNamespace => {
+  const taskNamespace: IdNamespace = createTestRunNamespace(context.task.name, namespace);
 
-  const sessionIdForTask: SessionId = v5((sessionPrefix ? sessionPrefix + '-' : '') + context.task.name, taskNamespace);
-  return sessionIdForTask;
+  const uuidForTask: IdNamespace = v5((prefix ? prefix + '-' : '') + context.task.name, taskNamespace);
+  return uuidForTask;
+};
+
+export const generateSessionIdForTest = (context: TaskContext, sessionPrefix?: string): string => {
+  return generatePrefixedUuidForTest(context, NIL_UUID, sessionPrefix);
 };
 
 export const generateUserIdForTest = (context: TaskContext, userPrefix?: string): UserId => {
-  const taskNamespace: IdNamespace = createTestRunNamespace(context.task.name);
-
-  const userIdForTask: UserId = v5((userPrefix ? userPrefix + '-' : '') + context.task.name, taskNamespace);
-  return userIdForTask;
+  return generatePrefixedUuidForTest(context, NIL_UUID, userPrefix);
 };
+
+export const generateSessionSecretForTest = (
+  context: TaskContext,
+  sessionPrefix?: string
+): SessionSecret => generatePrefixedUuidForTest(
+  context,
+  sessionPrefix,
+  SESSION_SECRET_UUID
+);
