@@ -91,6 +91,7 @@ export const setSessionCookie = (
   sessionId: SessionId,
   secret: SessionSecretSet
 ): void => {
-  assert(sessionId !== undefined, `Session ID for ${sessionIdKey} was passed to set on supertest app as undefined (secret=${secret}).`);
+  assert(sessionId !== undefined,
+    `Session ID for ${sessionIdKey} was passed to set on supertest app as undefined (secret=${secret}).`);
   app.set('Cookie', getSetCookieString(sessionIdKey, sessionId, secret));
 };
