@@ -15,9 +15,11 @@ export {
 } from './cookie/expectations.js';
 
 export {
+  getCookieFromSetCookieHeaderString,
+  setSessionCookie,
+  getSetCookieFromResponse,
   getSetCookieString,
   getSupertestSessionIdCookie,
-  getCookieFromSetCookieHeaderString as getSessionIdFromSetCookieString
 } from './cookieTestUtils.js';
 
 export {

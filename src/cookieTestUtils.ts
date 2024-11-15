@@ -35,14 +35,20 @@ export const getCookieFromSetCookieHeaderString = (
   return parsedCookie! as string;
 };
 
+export const getSetCookieFromResponse = (response: supertest.Response): string => {
+  const cookieHeaders = response.get('Set-Cookie');
+  assert(cookieHeaders !== undefined, 'Set-Cookie header should have been set');
+  assert(cookieHeaders.length > 0, 'Set-Cookie header should have at least one value');
+  expect(cookieHeaders[0]).not.toBeUndefined();
+  return cookieHeaders[0]!;
+};
+
 export const getSupertestSessionIdCookie = (
   cookieIdKey: string,
   response: supertest.Response,
   sessionSecret: SessionSecretSet
 ): SessionId | undefined => {
-  const cookieValue: string | undefined = response.get('Set-Cookie')![0];
-  expect(cookieValue, 'Set-Cookie should have at least one value').not.toBeUndefined();
-
+  const cookieValue: string = getSetCookieFromResponse(response);
   return getCookieFromSetCookieHeaderString(cookieIdKey, cookieValue!, sessionSecret);
 };
 
@@ -90,8 +96,8 @@ export const setSessionCookie = (
   sessionIdKey: string,
   sessionId: SessionId,
   secret: SessionSecretSet
-): void => {
+): supertest.Test => {
   assert(sessionId !== undefined,
     `Session ID for ${sessionIdKey} was passed to set on supertest app as undefined (secret=${secret}).`);
-  app.set('Cookie', getSetCookieString(sessionIdKey, sessionId, secret));
+  return app.set('Cookie', getSetCookieString(sessionIdKey, sessionId, secret));
 };
