@@ -19,7 +19,7 @@ export {
   setSessionCookie,
   getSetCookieFromResponse,
   getSetCookieString,
-  getSupertestSessionIdCookie,
+  getSupertestSessionIdCookie
 } from './cookieTestUtils.js';
 
 export {
