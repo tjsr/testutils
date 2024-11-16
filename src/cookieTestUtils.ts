@@ -14,12 +14,12 @@ export const getCookieFromSetCookieHeaderString = (
   const cookieObject: Record<string, string|undefined> = cookie.parse(cookieHeader);
   expect(cookieObject[cookieIdKey], `Cookie ${cookieIdKey} not found in ${cookieHeader}`).not.toBeUndefined();
   const parsedCookie = cookieParser.signedCookie(cookieObject[cookieIdKey]!, secret);
-  
+
   expect(parsedCookie,
-    `Parsed cookie ${cookieObject[cookieIdKey]} did not match session secret.`).not.toEqual(false);
+    `Parsed cookie ${cookieObject[cookieIdKey]} did not match session secret ${secret}.`).not.toEqual(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof parsedCookie === 'object' && (parsedCookie as any)[cookieIdKey] === false) {
-    throw new Error(`Cookie ${cookieObject[cookieIdKey]} was not signed correctly with secret ${secret}`);
+    throw new Error(`Cookie ${cookieObject[cookieIdKey]} object was not signed correctly with secret ${secret}`);
   }
   expect(parsedCookie, `${cookieIdKey} not found on cookie ${cookieHeader} (${parsedCookie})`).not.toBeUndefined();
   // expect(typeof parsedCookie, 

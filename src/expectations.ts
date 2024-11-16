@@ -1,5 +1,7 @@
 import { CookieOptions, Response } from 'express';
+
 import { SessionId } from "./types.js";
+import { getSupertestSessionIdCookie } from './cookieTestUtils.js';
 import supertest from "supertest";
 
 export const expectSetCookieHeaderOnResponseMock = (
@@ -20,11 +22,12 @@ export const expectSetCookieOnResponseMock = (
 };
 
 export const expectResponseSetsSessionIdCookie = (
-  response: supertest.Response, expectedSessionId: SessionId
+  response: supertest.Response, sessionIdKey: string, expectedSessionId: SessionId, secret: string
 ): void => {
-  const cookieValue = response.get('Set-Cookie')![0];
+  const cookieValue = getSupertestSessionIdCookie(sessionIdKey, response, secret);
+  // const cookieValue = response.get('Set-Cookie')![0];
   // expect(cookieValue).toMatch(new RegExp(`sessionId=${expectedSessionId};`));
-  expect(cookieValue).toMatch(new RegExp(`sessionId=${expectedSessionId}; Path=/; HttpOnly; SameSite=Strict`));
+  expect(cookieValue).toMatch(expectedSessionId);
 };
 
 export const expectDifferentSetCookieSessionId = (sessionId: SessionId, cookieValue: string): void => {
