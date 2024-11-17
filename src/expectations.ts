@@ -1,12 +1,33 @@
+import { CookieOptions, Response } from 'express';
+
 import { SessionId } from "./types.js";
+import { getSupertestSessionIdCookie } from './cookieTestUtils.js';
 import supertest from "supertest";
 
+export const expectSetCookieHeaderOnResponseMock = (
+  cookieIdKey: string,
+  response: Response,
+  cookieValue: string
+) => {
+  expect(response.set).toBeCalledWith('Set-Cookie', `${cookieIdKey}=${cookieValue}; Path=/; HttpOnly; SameSite=Strict`);
+};
+
+export const expectSetCookieOnResponseMock = (
+  cookieIdKey: string, response: Response, cookieValue: string, expectedCookieOptions?: CookieOptions) => {
+  const cookieOptions: CookieOptions = {
+    ...{ httpOnly: true, path: '/', sameSite: 'strict' },
+    ...expectedCookieOptions,
+  };
+  expect(response.cookie).toBeCalledWith(cookieIdKey, cookieValue, cookieOptions);
+};
+
 export const expectResponseSetsSessionIdCookie = (
-  response: supertest.Response, expectedSessionId: SessionId
+  response: supertest.Response, sessionIdKey: string, expectedSessionId: SessionId, secret: string
 ): void => {
-  const cookieValue = response.get('Set-Cookie')![0];
+  const cookieValue = getSupertestSessionIdCookie(sessionIdKey, response, secret);
+  // const cookieValue = response.get('Set-Cookie')![0];
   // expect(cookieValue).toMatch(new RegExp(`sessionId=${expectedSessionId};`));
-  expect(cookieValue).toMatch(new RegExp(`sessionId=${expectedSessionId}; Path=/; HttpOnly; SameSite=Strict`));
+  expect(cookieValue).toMatch(expectedSessionId);
 };
 
 export const expectDifferentSetCookieSessionId = (sessionId: SessionId, cookieValue: string): void => {
@@ -27,7 +48,7 @@ export const expectResponseResetsSessionIdCookie = (
   expect(responseCookies!.length, 'Response Set-Cookie header had no values').toBeGreaterThan(0);
 
   const matchingCookieValue: string|undefined =
-    responseCookies?.find((cookieValue) => cookieValue.match(/sessionId=(.*);/));
+    responseCookies?.find((cookieValue:string) => cookieValue.match(/sessionId=(.*);/));
 
   expect(matchingCookieValue, 'Response Set-Cookie header had no value with sessionId=').not.toBeUndefined();
   expectDifferentSetCookieSessionId(originalSessionId, matchingCookieValue!);
@@ -37,4 +58,8 @@ export const expectResponseResetsSessionIdCookie = (
     const firstCookieValue = responseCookies![0]!;
     expectDifferentSetCookieSessionId(originalSessionId, firstCookieValue);
   }
-}; 
+};
+
+export const expectSessionCookieHeaderOnResponseMock = (response: Response, sessionID: string) => {
+  expect(response.cookie).toBeCalledWith('sessionId', sessionID, { httpOnly: true, path: '/', strict: true });
+};

@@ -1,17 +1,25 @@
-export { generateUserIdForTest, generateSessionIdForTest } from './testIdUtils.js';
+export { generateSessionSecretForTest, generateUserIdForTest, generateSessionIdForTest } from './testIdUtils.js';
 
 export {
   expectSetCookieSessionId,
   expectDifferentSetCookieSessionId,
   expectResponseSetsSessionIdCookie,
-  expectResponseResetsSessionIdCookie
+  expectResponseResetsSessionIdCookie,
+  expectSetCookieOnResponseMock as expectSetSessionCookieOnResponseMock,
+  expectSessionCookieHeaderOnResponseMock,
+  expectSetCookieHeaderOnResponseMock as expectSetSessionCookieHeaderOnResponseMock
 } from './expectations.js';
 
+export { 
+  expectResponseSetsCookie
+} from './cookie/expectations.js';
+
 export {
-  getSupertestSessionIdCookie,
-  getSessionIdFromSetCookieString,
-  expectSetSessionCookieOnResponseMock,
-  expectSessionCookieHeaderOnResponseMock
+  getCookieFromSetCookieHeaderString,
+  setSessionCookie,
+  getSetCookieFromResponse,
+  getSetCookieString,
+  getSupertestSessionIdCookie
 } from './cookieTestUtils.js';
 
 export {
@@ -26,3 +34,5 @@ export { addIgnoredLog,
   clearIgnoreLogFilters,
   useLogFilters
 } from './logFilters.js';
+
+export type { SessionSecret, SessionSecretSet } from './types.js';
