@@ -1,11 +1,12 @@
-import { generateSessionIdForTest, generateSessionSecretForTest } from './testIdUtils.js';
+import { generateSessionIdForTestName, generateSessionSecretForTestName } from './testIdUtils.js';
 import { getCookieFromSetCookieHeaderString, getSetCookieString } from './cookieTestUtils.js';
+
 import { TaskContext } from 'vitest';
 
 describe('getSessionIdFromSetCookieString', () => {
   test('Should return a sessionId value in a string with path.', (context:TaskContext) => {
-    const sessionSecret = generateSessionSecretForTest(context);
-    const sessionId = generateSessionIdForTest(context);
+    const sessionSecret = generateSessionSecretForTestName(context.task.name);
+    const sessionId = generateSessionIdForTestName(context.task.name);
     const cookieString = getSetCookieString('sessionId', sessionId, sessionSecret);
 
     expect(getCookieFromSetCookieHeaderString('sessionId', cookieString, sessionSecret))
@@ -13,8 +14,8 @@ describe('getSessionIdFromSetCookieString', () => {
   });
 
   test('Should return a connect.sid value in a string with path.', (context:TaskContext) => {
-    const sessionSecret = generateSessionSecretForTest(context);
-    const sessionId = generateSessionIdForTest(context);
+    const sessionSecret = generateSessionSecretForTestName(context.task.name);
+    const sessionId = generateSessionIdForTestName(context.task.name);
     const cookieString = getSetCookieString('connect.sid', sessionId, sessionSecret);
 
     expect(getCookieFromSetCookieHeaderString('connect.sid', cookieString, sessionSecret))

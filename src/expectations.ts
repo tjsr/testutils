@@ -22,12 +22,12 @@ export const expectSetCookieOnResponseMock = (
 };
 
 export const expectResponseSetsSessionIdCookie = (
-  response: supertest.Response, sessionIdKey: string, expectedSessionId: SessionId, secret: string
+  response: supertest.Response, sessionIdKey: string, expectedSessionId: SessionId|undefined, secret: string
 ): void => {
   const cookieValue = getSupertestSessionIdCookie(sessionIdKey, response, secret);
-  // const cookieValue = response.get('Set-Cookie')![0];
-  // expect(cookieValue).toMatch(new RegExp(`sessionId=${expectedSessionId};`));
-  expect(cookieValue).toMatch(expectedSessionId);
+  if (expectedSessionId !== undefined) {
+    expect(cookieValue).toMatch(expectedSessionId);
+  }
 };
 
 export const expectDifferentSetCookieSessionId = (sessionId: SessionId, cookieValue: string): void => {

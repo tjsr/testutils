@@ -1,7 +1,6 @@
-import { IdNamespace, SessionSecret, UserId } from './types.js';
-
+import { IdNamespace, SessionId, SessionSecret, UserId } from './types.js';
 import { NIL_UUID, SESSION_SECRET_UUID, createTestRunNamespace } from './testNamespaceUtils.js';
-import { TaskContext } from 'vitest';
+
 import crypto from 'crypto';
 import { v5 } from 'uuid';
 
@@ -54,27 +53,27 @@ export const createTestSessionId = (suite: string): string => {
 };
 
 const generatePrefixedUuidForTest = (
-  context: TaskContext, namespace: IdNamespace = NIL_UUID, prefix?: string
+  testName: string, namespace: IdNamespace = NIL_UUID, prefix?: string
 ): IdNamespace => {
-  const taskNamespace: IdNamespace = createTestRunNamespace(context.task.name, namespace);
+  const taskNamespace: IdNamespace = createTestRunNamespace(testName, namespace);
 
-  const uuidForTask: IdNamespace = v5((prefix ? prefix + '-' : '') + context.task.name, taskNamespace);
+  const uuidForTask: IdNamespace = v5((prefix ? prefix + '-' : '') + testName, taskNamespace);
   return uuidForTask;
 };
 
-export const generateSessionIdForTest = (context: TaskContext, sessionPrefix?: string): string => {
-  return generatePrefixedUuidForTest(context, NIL_UUID, sessionPrefix);
+export const generateSessionIdForTestName = (testName: string, sessionPrefix?: string): SessionId => {
+  return generatePrefixedUuidForTest(testName, NIL_UUID, sessionPrefix);
 };
 
-export const generateUserIdForTest = (context: TaskContext, userPrefix?: string): UserId => {
-  return generatePrefixedUuidForTest(context, NIL_UUID, userPrefix);
+export const generateUserIdForTestName = (testName: string, userPrefix?: string): UserId => {
+  return generatePrefixedUuidForTest(testName, NIL_UUID, userPrefix);
 };
 
-export const generateSessionSecretForTest = (
-  context: TaskContext,
+export const generateSessionSecretForTestName = (
+  testName: string,
   sessionPrefix?: string
 ): SessionSecret => generatePrefixedUuidForTest(
-  context,
+  testName,
   sessionPrefix,
   SESSION_SECRET_UUID
 );

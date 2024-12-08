@@ -1,4 +1,8 @@
-export { generateSessionSecretForTest, generateUserIdForTest, generateSessionIdForTest } from './testIdUtils.js';
+export {
+  generateSessionSecretForTestName,
+  generateUserIdForTestName,
+  generateSessionIdForTestName
+} from './testIdUtils.js';
 
 export {
   expectSetCookieSessionId,
