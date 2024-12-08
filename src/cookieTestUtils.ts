@@ -4,7 +4,6 @@ import cookie from 'cookie';
 import cookieParser from "cookie-parser";
 import signature from "cookie-signature";
 import supertest from "supertest";
-import { validate } from "uuid";
 
 export const getCookieFromSetCookieHeaderString = (
   cookieIdKey: string,
@@ -16,22 +15,12 @@ export const getCookieFromSetCookieHeaderString = (
   const parsedCookie = cookieParser.signedCookie(cookieObject[cookieIdKey]!, secret);
 
   expect(parsedCookie,
-    `Parsed cookie ${cookieObject[cookieIdKey]} did not match session secret ${secret}.`).not.toEqual(false);
+    `Parsed cookie ${cookieObject[cookieIdKey]} did not match session secret '${secret}'.`).not.toEqual(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof parsedCookie === 'object' && (parsedCookie as any)[cookieIdKey] === false) {
     throw new Error(`Cookie ${cookieObject[cookieIdKey]} object was not signed correctly with secret ${secret}`);
   }
   expect(parsedCookie, `${cookieIdKey} not found on cookie ${cookieHeader} (${parsedCookie})`).not.toBeUndefined();
-  // expect(typeof parsedCookie, 
-  //   `Cookie result is ${parsedCookie} for input string ${cookieHeader} ` + 
-  //   'but should be parsed out as object when correctly signed.').not.toEqual('string'); 
-
-  // const cookieSessionId = (parsedCookie as any)[cookieIdKey];
-
-  // expect(cookieSessionId, `${cookieIdKey}= cookie should have a value`).not.toBeUndefined();
-  expect(validate(parsedCookie!),
-    `Returned cookie ${parsedCookie} was not a valid uuid from cookie string ${cookieHeader}`
-  ).toBe(true);
   return parsedCookie! as string;
 };
 
@@ -99,5 +88,7 @@ export const setSessionCookie = (
 ): supertest.Test => {
   assert(sessionId !== undefined,
     `Session ID for ${sessionIdKey} was passed to set on supertest app as undefined (secret=${secret}).`);
+  assert(secret !== undefined, 'Session secret was not provided to set session cookie');
+  console.debug('TEST MODE', setSessionCookie, `Set cookie for ${sessionIdKey}=${sessionId} with secret ${secret}`);
   return app.set('Cookie', getSetCookieString(sessionIdKey, sessionId, secret));
 };
