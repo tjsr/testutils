@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@tjsr/fs-utils": "^0.0.8",
-    "cookie": "^1.0.1",
+    "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
     "cookie-signature": "^1.2.2",
     "supertest": "^7.0.0",
