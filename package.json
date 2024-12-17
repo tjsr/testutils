@@ -9,7 +9,7 @@
     "vitest": "^2.1.8"
   },
   "name": "@tjsr/testutils",
-  "version": "0.0.8",
+  "version": "0.0.12",
   "description": "General test utilities",
   "type": "module",
   "main": "dist/esm/index.js",
