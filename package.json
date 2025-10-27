@@ -6,7 +6,7 @@
     "cookie-signature": "^1.2.2",
     "supertest": "^7.1.4",
     "uuid": "^13.0.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.3"
   },
   "name": "@tjsr/testutils",
   "version": "0.0.12",
