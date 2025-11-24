@@ -45,7 +45,7 @@
     "@types/supertest": "^6.0.3",
     "@types/uuid": "^11.0.0",
     "eslint": "^9.39.1",
-    "rimraf": "^6.1.0",
+    "rimraf": "^6.1.2",
     "typescript": "^5.9.3"
   },
   "repository": {
