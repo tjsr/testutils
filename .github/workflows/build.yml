@@ -32,7 +32,7 @@ jobs:
     - name: Set npm version
       run: npm install --global npm@${{ vars.NPM_VERSION || '12' }}
 
-    - run: npm ci
+    - run: npm ci --allow-git=all
 
     - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
       name: List the state of node modules

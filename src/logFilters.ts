@@ -2,6 +2,7 @@ let ignored: (string|RegExp)[] = ['You are running in development mode.', 'Found
 
 let ignoredSourceMethods: string[] = [];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type LogFunctionMethod = (_message?: any, ..._optionalParams: any[]) => void;
 type NamedFunction = (...args: never[]) => unknown;
 
