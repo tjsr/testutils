@@ -8,7 +8,7 @@ jobs:
       NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - name: Check out repository code
-      uses: actions/checkout@main
+      uses: actions/checkout@v5
 
     # Setup .npmrc file to publish to GitHub Packages
     - uses: actions/setup-node@v7
@@ -18,20 +18,21 @@ jobs:
 
     - name: Cache node modules
       id: cache-npm
-      uses: actions/cache@main
+      uses: actions/cache@v4
       env:
         cache-name: cache-node-modules
       with:
-        # npm cache files are stored in `~/.npm` on Linux/macOS
         path: ~/.npm
-        # todo - change this so we are less restrictive on package-lock changes
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
           ${{ runner.os }}-build-
           ${{ runner.os }}-
 
-    - run: npm ci
+    - name: Set npm version
+      run: npm install --global npm@${{ vars.NPM_VERSION || '12' }}
+
+    - run: npm ci --allow-git=all
 
     - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
       name: List the state of node modules
@@ -45,4 +46,3 @@ jobs:
       if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/prod'
       run: |
         npm publish --dry-run
-  

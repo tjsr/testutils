@@ -1,7 +1,7 @@
 import { CookieOptions, Response } from 'express';
 
 import { SessionId } from "./types.js";
-import { getSupertestSessionIdCookie } from './cookieTestUtils.js';
+import { getSupertestSessionIdCookie } from './cookieTestUtils.ts';
 import supertest from "supertest";
 
 export const expectSetCookieHeaderOnResponseMock = (

@@ -1,5 +1,5 @@
-import { IdNamespace, SessionId, SessionSecret, UserId } from './types.js';
-import { NIL_UUID, SESSION_SECRET_UUID, createTestRunNamespace } from './testNamespaceUtils.js';
+import { IdNamespace, SessionId, SessionSecret, UserId } from './types.ts';
+import { NIL_UUID, SESSION_SECRET_UUID, createTestRunNamespace } from './testNamespaceUtils.ts';
 
 import crypto from 'crypto';
 import { v5 } from 'uuid';
