@@ -1,6 +1,6 @@
 import { SessionId, SessionSecret, SessionSecretSet } from "./types.js";
 
-import cookie from 'cookie';
+import { parseCookie, stringifySetCookie, type SerializeOptions } from 'cookie';
 import cookieParser from "cookie-parser";
 import signature from "cookie-signature";
 import supertest from "supertest";
@@ -10,16 +10,12 @@ export const getCookieFromSetCookieHeaderString = (
   cookieHeader: string,
   secret: SessionSecretSet
 ): SessionId => {
-  const cookieObject: Record<string, string|undefined> = cookie.parse(cookieHeader);
+  const cookieObject = parseCookie(cookieHeader);
   expect(cookieObject[cookieIdKey], `Cookie ${cookieIdKey} not found in ${cookieHeader}`).not.toBeUndefined();
   const parsedCookie = cookieParser.signedCookie(cookieObject[cookieIdKey]!, secret);
 
   expect(parsedCookie,
     `Parsed cookie ${cookieObject[cookieIdKey]} did not match session secret '${secret}'.`).not.toEqual(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (typeof parsedCookie === 'object' && (parsedCookie as any)[cookieIdKey] === false) {
-    throw new Error(`Cookie ${cookieObject[cookieIdKey]} object was not signed correctly with secret ${secret}`);
-  }
   expect(parsedCookie, `${cookieIdKey} not found on cookie ${cookieHeader} (${parsedCookie})`).not.toBeUndefined();
   return parsedCookie! as string;
 };
@@ -53,7 +49,7 @@ export const getSetCookieString = (
   cookieIdKey: string,
   cookieValue: string,
   secret: SessionSecretSet,
-  options?: cookie.SerializeOptions
+  options?: SerializeOptions
 ): string => {
   if (!secret) {
     throw new Error('Do not use unsigned cookies.');
@@ -69,12 +65,15 @@ export const getSetCookieString = (
   }
   const cipherSecret: SessionSecret = Array.isArray(secret) ? secret[0] as string : secret as string;
   cookieValue = 's:' + signature.sign(cookieValue, cipherSecret);
-  const cookieString = cookie.serialize(cookieIdKey, cookieValue, {
-    ...options,
+  const { encode, ...setCookieOptions } = options ?? {};
+  const cookieString = stringifySetCookie({
+    ...setCookieOptions,
+    name: cookieIdKey,
+    value: cookieValue,
     httpOnly: options?.httpOnly ?? true,
     path: options?.path ?? '/',
     sameSite: options?.sameSite ?? 'strict',
-  });
+  }, { encode });
   assert(cookieString !== undefined, 'Cookie string should have been defined');
   assert(cookieString !== '', 'Cookie string should not have been empty');
   return cookieString;
@@ -89,6 +88,5 @@ export const setSessionCookie = (
   assert(sessionId !== undefined,
     `Session ID for ${sessionIdKey} was passed to set on supertest app as undefined (secret=${secret}).`);
   assert(secret !== undefined, 'Session secret was not provided to set session cookie');
-  console.debug('TEST MODE', setSessionCookie, `Set cookie for ${sessionIdKey}=${sessionId} with secret ${secret}`);
   return app.set('Cookie', getSetCookieString(sessionIdKey, sessionId, secret));
 };

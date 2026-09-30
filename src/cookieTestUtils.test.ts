@@ -1,5 +1,5 @@
-import { generateSessionIdForTestName, generateSessionSecretForTestName } from './testIdUtils.js';
-import { getCookieFromSetCookieHeaderString, getSetCookieString } from './cookieTestUtils.js';
+import { generateSessionIdForTestName, generateSessionSecretForTestName } from './testIdUtils.ts';
+import { getCookieFromSetCookieHeaderString, getSetCookieString } from './cookieTestUtils.ts';
 
 import { TaskContext } from 'vitest';
 
@@ -24,7 +24,6 @@ describe('getSessionIdFromSetCookieString', () => {
 
   test('Should return connect.sid with signing', (_context: TaskContext) => {
     const cookieSecret = 'some-secret-here';
-    // eslint-disable-next-line max-len
     const testString = 'test.sid=s%3A9ddbb216-dd54-57c8-8821-3c9bf871c33a.zfyb%2BvSIhEw7eZbbhNPsCZc6r%2FuSR42OCLIbQclLr08; Path=/; HttpOnly; SameSite=Strict';
     expect(
       // testString
@@ -45,9 +44,7 @@ describe('getSetCookieString', () => {
       'test-signed-secret'
     );
     expect(signedCookie)
-      // eslint-disable-next-line max-len
-      .toEqual('test.signed.sid=s%3Ad569a638-3fec-4e29-9b86-52f006ca45e4.T82LJ7uzZgVQbz8%2B2QH69JncmsYrPwq1Y9jE3qvgwHg; Path=/; HttpOnly; SameSite=Strict');
-    console.log(signedCookie);
+      .toEqual('test.signed.sid=s:d569a638-3fec-4e29-9b86-52f006ca45e4.T82LJ7uzZgVQbz8+2QH69JncmsYrPwq1Y9jE3qvgwHg; Path=/; HttpOnly; SameSite=Strict');
   });
 
 });

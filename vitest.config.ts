@@ -6,6 +6,7 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
     },
     globals: true,
+    exclude: ['**/node_modules/**', 'dist/**'],
     testTimeout: (process.env['VITEST_VSCODE'] !== undefined ? 120 : 3) * 1000,
   },
 });

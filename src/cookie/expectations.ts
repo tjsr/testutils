@@ -1,14 +1,13 @@
 import { SessionId } from "../types.js";
-import cookie from 'cookie';
+import { parseCookie } from 'cookie';
 import cookieParser from "cookie-parser";
 import supertest from "supertest";
 
 export const cookieHeadersAsObject = (setCookieHeaders: string[]|undefined): Record<string, string> => {
   const cookies:Record<string, string> = {};
   
-  console.log(setCookieHeaders);
   setCookieHeaders?.forEach((c) => {
-    const headerCookies = cookie.parse(c);
+    const headerCookies = parseCookie(c);
     Object.keys(headerCookies).forEach((key) => {
       if (headerCookies[key] !== undefined) {
         cookies[key] = headerCookies[key];
@@ -45,8 +44,6 @@ export const expectResponseSetsCookie = (
   //   // eslint-disable-next-line max-len
   //   new RegExp(`${cookieKey}=s.*${expectedSessionId}.*; Path=(.*); Expires=(.*); HttpOnly; SameSite=Strict`)
   // );
-  console.log('expectResponseSetsCookie', expectedCookieValue, cookies);
-
   expect(cookies[cookieKey], `No cookie ${cookieKey} found in provided cookies.`).not.toBeUndefined();
 
   const parsedCookie = cookieParser.signedCookies(cookies, secret);

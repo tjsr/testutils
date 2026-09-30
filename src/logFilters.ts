@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 let ignored: (string|RegExp)[] = ['You are running in development mode.', 'Found no env files to load.'];
 
 let ignoredSourceMethods: string[] = [];
 
 type LogFunctionMethod = (_message?: any, ..._optionalParams: any[]) => void;
+type NamedFunction = (...args: never[]) => unknown;
 
-const filterIgnored = (callback: LogFunctionMethod, ...args: any[]) => {
+const filterIgnored = (callback: LogFunctionMethod, ...args: unknown[]) => {
   const firstArg = args?.[0];
   let msg;
   if (typeof firstArg === 'function') {
@@ -17,7 +17,7 @@ const filterIgnored = (callback: LogFunctionMethod, ...args: any[]) => {
     msg = args?.[0];
   }
 
-  if (typeof msg === 'function' && ignoredSourceMethods.includes(args[0].name)) {
+  if (typeof msg === 'function' && typeof firstArg === 'function' && ignoredSourceMethods.includes(firstArg.name)) {
     return;
   }
   if (typeof msg !== 'string' || !ignored.some((ignoredMsg) => {
@@ -45,13 +45,13 @@ export const addIgnoredLog = (msg: string|RegExp) => {
   ignored.push(msg);
 };
 
-export const addIgnoredLogsFromFunction = (...fns: Function[]) => {
+export const addIgnoredLogsFromFunction = (...fns: NamedFunction[]) => {
   fns.forEach((fn) => {
     ignoredSourceMethods.push(fn.name);
   });
 };
 
-export const removeIgnoredLogsFromFunction = (fn: Function) => {
+export const removeIgnoredLogsFromFunction = (fn: NamedFunction) => {
   ignoredSourceMethods = ignoredSourceMethods.filter((ignoredFn) => ignoredFn !== fn.name);
 };
 
