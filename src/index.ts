@@ -2,7 +2,7 @@ export {
   generateSessionSecretForTestName,
   generateUserIdForTestName,
   generateSessionIdForTestName
-} from './testIdUtils.js';
+} from './testIdUtils.ts';
 
 export {
   expectSetCookieSessionId,
@@ -12,11 +12,11 @@ export {
   expectSetCookieOnResponseMock as expectSetSessionCookieOnResponseMock,
   expectSessionCookieHeaderOnResponseMock,
   expectSetCookieHeaderOnResponseMock as expectSetSessionCookieHeaderOnResponseMock
-} from './expectations.js';
+} from './expectations.ts';
 
 export { 
   expectResponseSetsCookie
-} from './cookie/expectations.js';
+} from './cookie/expectations.ts';
 
 export {
   getCookieFromSetCookieHeaderString,
@@ -24,19 +24,19 @@ export {
   getSetCookieFromResponse,
   getSetCookieString,
   getSupertestSessionIdCookie
-} from './cookieTestUtils.js';
+} from './cookieTestUtils.ts';
 
 export {
   findEnvFile,
   findViteConfigPath,
   findPackageJson
-} from './viteConfigUtils.js';
+} from './viteConfigUtils.ts';
 
 export { addIgnoredLog,
   addIgnoredLogsFromFunction,
   clearIgnoredFunctions,
   clearIgnoreLogFilters,
   useLogFilters
-} from './logFilters.js';
+} from './logFilters.ts';
 
-export type { SessionSecret, SessionSecretSet } from './types.js';
+export type { SessionSecret, SessionSecretSet } from './types.ts';

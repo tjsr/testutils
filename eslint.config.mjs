@@ -5,6 +5,6 @@ export default tseslint.config({
   extends: [
     ...tjsrEslintConfig,
   ],
-  files: ["**/*.ts"],
-  ignores: ["dist/**"],
+  files: ['**/*.ts'],
+  ignores: ['dist/**', 'node_modules/**'],
 });
