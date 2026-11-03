@@ -12,7 +12,7 @@ try {
   const packed = JSON.parse(run(process.execPath, [npm, 'pack', root, '--ignore-scripts', '--json']));
   const packageDirectory = path.join(directory, 'node_modules/@tjsr/testutils');
   fs.mkdirSync(packageDirectory, { recursive: true });
-  run('tar', ['-xzf', packed[0].filename, '-C', packageDirectory, '--strip-components=1']);
+  run('tar', ['-xzf', Object.values(packed)[0].filename, '-C', packageDirectory, '--strip-components=1']);
   const manifest = JSON.parse(fs.readFileSync(path.join(packageDirectory, 'package.json'), 'utf8'));
   for (const condition of ['import', 'require']) {
     for (const field of ['types', 'default']) {
