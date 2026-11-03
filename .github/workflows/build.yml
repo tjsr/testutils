@@ -5,8 +5,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        node: [22, 24]
+        node: [22, 24, 26]
     env:
       NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -26,10 +27,10 @@ jobs:
         cache-name: cache-node-modules
       with:
         path: ~/.npm
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-${{ matrix.node }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
+          ${{ runner.os }}-${{ matrix.node }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-${{ matrix.node }}-build-
           ${{ runner.os }}-
 
     - name: Set npm version
@@ -55,7 +56,7 @@ jobs:
     - name: Run all checks at end on all other branches
       if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/prod'
       run: |
-        npm publish --dry-run
+        npm pack --dry-run
 
   publish-approved-fix:
     name: Publish approved testutils 0.0.12
