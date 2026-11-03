@@ -30,9 +30,9 @@ jobs:
           ${{ runner.os }}-
 
     - name: Set npm version
-      run: npm install --global npm@${{ vars.NPM_VERSION || '12' }}
+      run: npm install --global npm@latest
 
-    - run: npm ci --allow-git=all
+    - run: npm ci
 
     - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
       name: List the state of node modules
@@ -41,6 +41,7 @@ jobs:
 
     - run: npm run test
     - run: npm run build:dist
+    - run: npm run test:package
 
     - name: Run all checks at end on all other branches
       if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/prod'

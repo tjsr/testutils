@@ -20,15 +20,21 @@
   "module": "dist/esm/index.js",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     }
   },
   "scripts": {
     "test": "vitest --run && npm run lint",
     "build": "tsc",
     "build:dev": "tsc -w",
-    "build:dist": "tsc -p tsconfig.publish.json && tsc -p tsconfig.cjs.json",
+    "build:dist": "tsc -p tsconfig.publish.json && tsc -p tsconfig.cjs.json && node scripts/finalize-dist.cjs",
     "clean": "npx rimraf dist build",
     "clean:all": "npx rimraf dist build node_modules",
     "prebuild:dev": "linkteam",
@@ -38,7 +44,8 @@
     "dist:clean": "npm run dist",
     "lint": "eslint --config eslint.config.mjs src/*.ts",
     "lint:fix": "eslint --fix src/*.ts",
-    "prepack": "npm run dist:clean"
+    "prepack": "npm run dist:clean",
+    "test:package": "node scripts/test-package.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
