@@ -4,6 +4,9 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22, 24]
     env:
       NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -13,7 +16,7 @@ jobs:
     # Setup .npmrc file to publish to GitHub Packages
     - uses: actions/setup-node@v7
       with:
-        node-version: ${{ vars.NODE_VERSION }}
+        node-version: ${{ matrix.node }}
         registry-url: 'https://npm.pkg.github.com'
 
     - name: Cache node modules
@@ -30,9 +33,15 @@ jobs:
           ${{ runner.os }}-
 
     - name: Set npm version
-      run: npm install --global npm@${{ vars.NPM_VERSION || '12' }}
+      run: npm install --global npm@latest
 
-    - run: npm ci --allow-git=all
+    - run: node --test scripts/check-npm-json.mjs
+
+    - name: Check approved version is unused
+      if: github.ref == 'refs/heads/fix/dual-package-declarations' || github.head_ref == 'fix/dual-package-declarations'
+      run: node scripts/publish-approved-release.mjs --check
+
+    - run: npm ci
 
     - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
       name: List the state of node modules
@@ -41,8 +50,33 @@ jobs:
 
     - run: npm run test
     - run: npm run build:dist
+    - run: npm run test:package
 
     - name: Run all checks at end on all other branches
       if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/prod'
       run: |
         npm publish --dry-run
+
+  publish-approved-fix:
+    name: Publish approved testutils 0.0.12
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Release testutils 0.0.12')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    concurrency:
+      group: testutils-approved-release-0.0.12
+      cancel-in-progress: false
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+          registry-url: https://npm.pkg.github.com
+          scope: '@tjsr'
+      - run: npm install --global npm@latest
+      - run: npm ci
+      - run: node scripts/publish-approved-release.mjs
