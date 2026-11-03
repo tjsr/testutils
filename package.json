@@ -73,5 +73,8 @@
   "bugs": {
     "url": "https://github.com/tjsr/testutils/issues"
   },
-  "homepage": "https://github.com/tjsr/testutils#readme"
+  "homepage": "https://github.com/tjsr/testutils#readme",
+  "files": [
+    "dist"
+  ]
 }
