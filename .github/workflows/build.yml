@@ -38,7 +38,7 @@ jobs:
     - run: node --test scripts/check-npm-json.mjs
 
     - name: Check approved version is unused
-      if: github.ref == 'refs/heads/fix/dual-package-declarations' || github.head_ref == 'fix/dual-package-declarations'
+      if: github.ref == 'refs/heads/release/testutils-0.0.12' || github.head_ref == 'release/testutils-0.0.12'
       run: node scripts/publish-approved-release.mjs --check
 
     - run: npm ci
