@@ -35,7 +35,7 @@ jobs:
     - name: Set npm version
       run: npm install --global npm@latest
 
-    - run: node --test scripts/npm-json.test.mjs
+    - run: node --test scripts/check-npm-json.mjs
 
     - name: Check approved version is unused
       if: github.ref == 'refs/heads/fix/dual-package-declarations' || github.head_ref == 'fix/dual-package-declarations'
