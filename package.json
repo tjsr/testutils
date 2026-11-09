@@ -4,7 +4,7 @@
     "cookie": "^2.0.1",
     "cookie-parser": "^1.4.7",
     "cookie-signature": "^1.2.2",
-    "supertest": "^7.3.0",
+    "supertest": "^7.3.1",
     "uuid": "^14.0.2",
     "vitest": "^5.0.2"
   },
