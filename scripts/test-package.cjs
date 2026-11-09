@@ -30,7 +30,7 @@ export { cookie };
 `;
   for (const extension of ['mts', 'cts']) {
     fs.writeFileSync(path.join(directory, `consumer.${extension}`), fixture);
-    run(process.execPath, [path.join(root, 'node_modules/typescript/bin/tsc'), '--ignoreConfig', '--noEmit', '--strict', '--module', 'NodeNext', '--moduleResolution', 'NodeNext', '--target', 'ES2022', '--lib', 'ES2022', '--types', 'node', `consumer.${extension}`]);
+    run(process.execPath, [path.join(root, 'node_modules/@typescript/native/bin/tsc'), '--ignoreConfig', '--noEmit', '--strict', '--module', 'NodeNext', '--moduleResolution', 'NodeNext', '--target', 'ES2022', '--lib', 'ES2022', '--types', 'node', `consumer.${extension}`]);
   }
   const assertion = `if (typeof utils.generateSessionIdForTestName('package regression') !== 'string') throw new Error('Missing runtime export');`;
   fs.writeFileSync(path.join(directory, 'runtime.mjs'), `import * as utils from '@tjsr/testutils';\n${assertion}\n`);
