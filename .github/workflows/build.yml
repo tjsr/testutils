@@ -42,7 +42,7 @@ jobs:
       if: github.ref == 'refs/heads/release/testutils-0.0.12' || github.head_ref == 'release/testutils-0.0.12'
       run: node scripts/publish-approved-release.mjs --check
 
-    - run: npm ci
+    - run: npm ci --strict-peer-deps
 
     - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
       name: List the state of node modules
