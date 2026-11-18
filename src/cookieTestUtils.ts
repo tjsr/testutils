@@ -1,9 +1,9 @@
 import { type SerializeOptions, parseCookie, stringifySetCookie } from 'cookie';
-import { SessionId, SessionSecret, SessionSecretSet } from "./types.js";
-
 import cookieParser from "cookie-parser";
 import signature from "cookie-signature";
 import supertest from "supertest";
+
+import { SessionId, SessionSecret, SessionSecretSet } from "./types.js";
 
 export const getCookieFromSetCookieHeaderString = (
   cookieIdKey: string,
