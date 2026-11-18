@@ -1,10 +1,10 @@
-import { TaskContext } from 'vitest';
+import { TestContext } from 'vitest';
 
 import { getCookieFromSetCookieHeaderString, getSetCookieString } from './cookieTestUtils.ts';
 import { generateSessionIdForTestName, generateSessionSecretForTestName } from './testIdUtils.ts';
 
 describe('getSessionIdFromSetCookieString', () => {
-  test('Should return a sessionId value in a string with path.', (context:TaskContext) => {
+  test('Should return a sessionId value in a string with path.', (context: TestContext) => {
     const sessionSecret = generateSessionSecretForTestName(context.task.name);
     const sessionId = generateSessionIdForTestName(context.task.name);
     const cookieString = getSetCookieString('sessionId', sessionId, sessionSecret);
@@ -13,7 +13,7 @@ describe('getSessionIdFromSetCookieString', () => {
       .toEqual('ce70f0f0-56ee-52e1-871d-a65f2d6b7303');
   });
 
-  test('Should return a connect.sid value in a string with path.', (context:TaskContext) => {
+  test('Should return a connect.sid value in a string with path.', (context: TestContext) => {
     const sessionSecret = generateSessionSecretForTestName(context.task.name);
     const sessionId = generateSessionIdForTestName(context.task.name);
     const cookieString = getSetCookieString('connect.sid', sessionId, sessionSecret);
@@ -22,7 +22,7 @@ describe('getSessionIdFromSetCookieString', () => {
       .toEqual('fbda4d1e-aa96-5de2-8535-643fb9ee851e');
   });
 
-  test('Should return connect.sid with signing', (_context: TaskContext) => {
+  test('Should return connect.sid with signing', (_context: TestContext) => {
     const cookieSecret = 'some-secret-here';
     const testString = 'test.sid=s%3A9ddbb216-dd54-57c8-8821-3c9bf871c33a.zfyb%2BvSIhEw7eZbbhNPsCZc6r%2FuSR42OCLIbQclLr08; Path=/; HttpOnly; SameSite=Strict';
     expect(
