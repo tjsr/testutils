@@ -1,7 +1,7 @@
-import { generateSessionIdForTestName, generateSessionSecretForTestName } from './testIdUtils.ts';
-import { getCookieFromSetCookieHeaderString, getSetCookieString } from './cookieTestUtils.ts';
-
 import { TestContext } from 'vitest';
+
+import { getCookieFromSetCookieHeaderString, getSetCookieString } from './cookieTestUtils.ts';
+import { generateSessionIdForTestName, generateSessionSecretForTestName } from './testIdUtils.ts';
 
 describe('getSessionIdFromSetCookieString', () => {
   test('Should return a sessionId value in a string with path.', (context: TestContext) => {
