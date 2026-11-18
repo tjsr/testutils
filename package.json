@@ -50,7 +50,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^6.0.0",
-    "@tjsr/eslint-config": "github:tjsr/eslint-config#main",
+    "@tjsr/eslint-config": "github:tjsr/eslint-config#c4f9390235d29f38d17d28f00c74d018206f216a",
     "@types/cookie-parser": "^1.4.10",
     "@types/cookie-signature": "^1.1.2",
     "@types/express": "^5.0.6",
