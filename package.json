@@ -48,13 +48,14 @@
     "test:package": "node scripts/test-package.cjs"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.39.1",
     "@stylistic/eslint-plugin": "^6.0.0",
     "@tjsr/eslint-config": "github:tjsr/eslint-config#c4f9390235d29f38d17d28f00c74d018206f216a",
     "@types/cookie-parser": "^1.4.10",
     "@types/cookie-signature": "^1.1.2",
     "@types/express": "^5.0.6",
     "@types/supertest": "^7.2.1",
+    "prettier": "^3.6.2",
     "@typescript/native": "npm:typescript@^7.0.2",
     "eslint": "^10.5.0",
     "globals": "^17.14.0",
