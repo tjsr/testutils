@@ -1,7 +1,8 @@
-import { SessionId } from "../types.js";
 import { parseCookie } from 'cookie';
 import cookieParser from "cookie-parser";
 import supertest from "supertest";
+
+import { SessionId } from "../types.js";
 
 export const cookieHeadersAsObject = (setCookieHeaders: string[]|undefined): Record<string, string> => {
   const cookies:Record<string, string> = {};

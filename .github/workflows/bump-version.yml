@@ -1,65 +1,53 @@
-name: "Update version number and publish to package repository."
-run-name: "${{ inputs.noTag != 'true' && 'Bump/tag' || 'Bump' }} version (${{ inputs.patchlevel }}) ${{ inputs.noPublish == 'true' && 'on' || 'and publish'}} ${{ github.repository}}"
+name: Bump version and publish
+run-name: Bump ${{ inputs.patchlevel }} version of testutils
+
 on:
   workflow_dispatch:
     inputs:
       patchlevel:
+        description: Release level
         type: choice
-        description: 'Patch level'
         required: true
-        default: 'prerelease'
-        options:
-        - 'prerelease'
-        - 'patch'
-        - 'minor'
-        - 'major'
+        default: prerelease
+        options: [prerelease, patch, minor, major]
       noTag:
-        description: 'Do not create a tag'
-        default: false
+        description: Do not create a Git tag
         type: boolean
+        default: false
       noPublish:
-        description: 'Do not publish'
-        default: false
+        description: Bump without publishing
         type: boolean
-  
+        default: false
+      usePr:
+        description: Create a release PR
+        type: boolean
+        default: true
+
 permissions:
   contents: write
   packages: write
+  pull-requests: write
 
 jobs:
   bump:
-    name: "Bump version number and publish"
-    env:
-      NODE_CACHE_KEY: "npm-cache-${{ github.run_id }}-${{ github.run_number }}"
-      NODE_VERSION: ${{ vars.NODE_VERSION }}
-      NPM_VERSION: ${{ vars.NPM_VERSION }}
-      NODE_AUTH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-    
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+      published: ${{ steps.bump.outputs.published }}
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Verify inputs
-        run: |
-          if [ -z "${{ inputs.patchlevel }}" ]; then
-            echo "Patch level is required."
-            exit 1
-          fi
-
-      - name: Check out repository code
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          ref: ${{ github.ref }}
-
-      - name: Common node/npm setup
-        id: node-setup
-        uses: tjsr/gh-util-actions/node-common-setup@main
-        with:
-          # token: ${{ secrets.PACKAGE_PUBLISH_TOKEN }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          scope: "@tjsr"
-          cache-key: ${{ env.NODE_CACHE_KEY}}
-          node-version: ${{ env.NODE_VERSION }}
-          npm-version: ${{ env.NPM_VERSION }}
-
+          node-version: ${{ vars.NODE_VERSION || '24' }}
+          registry-url: https://npm.pkg.github.com
+          scope: '@tjsr'
+      - run: npm install --global npm@latest
+      - run: npm ci
+      - run: npm test
+      - run: npm run build:dist
+      - run: npm run test:package
       - name: Bump and publish
         id: bump
         uses: tjsr/gh-util-actions/version-bump-publish@main
@@ -69,13 +57,23 @@ jobs:
           no-tag: ${{ inputs.noTag }}
           no-publish: ${{ inputs.noPublish }}
           preid: ${{ github.ref != 'refs/heads/main' && 'dev' || 'release' }}
-          requiresPr: true
+          requiresPr: ${{ inputs.usePr || github.ref == 'refs/heads/main' }}
 
-      - name: "Confirm published: ${{ steps.bump.outputs.version }}"
-        if: ${{ steps.bump.conclusion == 'success' }}
+  notify-consumers:
+    needs: bump
+    if: needs.bump.outputs.published == 'true'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.TJSR_AUTOMATION_TOKEN }}
+      PACKAGE_NAME: '@tjsr/testutils'
+      PACKAGE_VERSION: ${{ needs.bump.outputs.version }}
+    steps:
+      - name: Dispatch dependency updates
         run: |
-          if [ -z "${{ steps.bump.outputs.version }}" ]; then
-            echo "No version published"
-            exit 1
-          fi
-          echo "Published: ${{ steps.bump.outputs.version }}"
+          test -n "$GH_TOKEN" || { echo 'TJSR_AUTOMATION_TOKEN is required to notify downstream repositories.'; exit 1; }
+          for repository in tjsr/simple-env-utils tjsr/mysql-pool-utils tjsr/user-session-middleware tjsr/tagtool tjsr/absee; do
+            gh api --method POST "repos/$repository/dispatches" \
+              -f event_type=tjsr-package-published \
+              -f "client_payload[package]=$PACKAGE_NAME" \
+              -f "client_payload[version]=$PACKAGE_VERSION"
+          done

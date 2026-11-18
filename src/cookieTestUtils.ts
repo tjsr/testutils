@@ -1,9 +1,9 @@
-import { SessionId, SessionSecret, SessionSecretSet } from "./types.js";
-
-import { parseCookie, stringifySetCookie, type SerializeOptions } from 'cookie';
+import { type SerializeOptions, parseCookie, stringifySetCookie } from 'cookie';
 import cookieParser from "cookie-parser";
 import signature from "cookie-signature";
 import supertest from "supertest";
+
+import { SessionId, SessionSecret, SessionSecretSet } from "./types.js";
 
 export const getCookieFromSetCookieHeaderString = (
   cookieIdKey: string,
@@ -68,11 +68,11 @@ export const getSetCookieString = (
   const { encode, ...setCookieOptions } = options ?? {};
   const cookieString = stringifySetCookie({
     ...setCookieOptions,
-    name: cookieIdKey,
-    value: cookieValue,
     httpOnly: options?.httpOnly ?? true,
+    name: cookieIdKey,
     path: options?.path ?? '/',
     sameSite: options?.sameSite ?? 'strict',
+    value: cookieValue,
   }, { encode });
   assert(cookieString !== undefined, 'Cookie string should have been defined');
   assert(cookieString !== '', 'Cookie string should not have been empty');

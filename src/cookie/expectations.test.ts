@@ -1,5 +1,6 @@
-import { cookieHeadersAsObject } from "./expectations.js";
 import cookieParser from "cookie-parser";
+
+import { cookieHeadersAsObject } from "./expectations.js";
 
 describe('cookieHeadersAsObject', () => {
   test('Should return a split Set-Cookie header', () => {
