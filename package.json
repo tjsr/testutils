@@ -48,9 +48,9 @@
     "test:package": "node scripts/test-package.cjs"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.5",
-    "@stylistic/eslint-plugin": "^5.10.0",
-    "@tjsr/eslint-config": "github:tjsr/eslint-config#main",
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^6.0.0",
+    "@tjsr/eslint-config": "github:tjsr/eslint-config#c4f9390235d29f38d17d28f00c74d018206f216a",
     "@types/cookie-parser": "^1.4.10",
     "@types/cookie-signature": "^1.1.2",
     "@types/express": "^5.0.6",
