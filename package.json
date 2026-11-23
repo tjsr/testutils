@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@stylistic/eslint-plugin": "^6.0.0",
+    "@stylistic/eslint-plugin": "^6.0.1",
     "@tjsr/eslint-config": "github:tjsr/eslint-config#c4f9390235d29f38d17d28f00c74d018206f216a",
     "@types/cookie-parser": "^1.4.10",
     "@types/cookie-signature": "^1.1.2",
@@ -61,7 +61,7 @@
     "globals": "^17.14.0",
     "rimraf": "^6.1.4",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "typescript-eslint": "^8.72.2"
+    "typescript-eslint": "^8.73.0"
   },
   "repository": {
     "type": "git",
